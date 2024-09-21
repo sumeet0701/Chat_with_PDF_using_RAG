@@ -75,10 +75,9 @@ def text_chunk(text):
             separator= "\n",
             chunk_size = 512,
             chunk_overlap = 100,
-            lenght_fuction = "len",
-            is_separator_regex= False,
+            lenght_function = "len",
         )
-        chunks = text_splitter(text)
+        chunks = text_splitter.split_text(text)
         logging.info("chunking extracted text is completed successfully")
         return chunks
     except Exception as e:

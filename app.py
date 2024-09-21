@@ -17,43 +17,39 @@ def handle_question(question):
         else:
             st.write(bot_template.replace("{{MSG}}",msg.content),unsafe_allow_html=True)
 
+
 def main():
     load_dotenv()
-    st.set_page_config(
-        page_title = "Chat with Multiple pdf using RAG",
-        page_icon = ":books:"
-    )
+    st.set_page_config(page_title="Chat with multiple PDFs",page_icon=":books:")
+    st.write(css,unsafe_allow_html=True)
     if "conversation" not in st.session_state:
-        st.session_state.conversation = None
+        st.session_state.conversation=None
 
     if "chat_history" not in st.session_state:
-        st.session_state.chat_history = None
-
-    st.headers("Chat with multiple pdf using RAG :book:")
-    question = st.text_input("Ask the question from your documents: ")
-
+        st.session_state.chat_history=None
+    
+    st.header("Chat with multiple PDFs :books:")
+    question=st.text_input("Ask question from your document:")
     if question:
-        handle_question(question= question)
-    
+        handle_question(question)
     with st.sidebar:
-        st.subheader("your documents")
-
-        docs = st.file_uploader("upload your documents and click on 'process'", accept_multiple_file= True)
-
-        if st.button("process"):
-            with st.spinner("processing"):
+        st.subheader("Your documents")
+        docs=st.file_uploader("Upload your PDF here and click on 'Process'",accept_multiple_files=True)
+        if st.button("Process"):
+            with st.spinner("Processing"):
                 
-                raw_text = extract_text_from_pdf(docs=docs)
-
-                chunk = text_chunk(raw_text)
+                #get the pdf
+                raw_text=extract_text_from_pdf(docs)
                 
-                vector = get_vectorstore(chunk)
+                #get the text chunks
+                text_chunks=text_chunk(raw_text)
+                
+                #create vectorstore
+                vectorstore=get_vectorstore(text_chunks)
+                
+                #create conversation chain
+                st.session_state.conversation=get_conversational_chain(vectorstore)
 
-                st.session_state  = get_conversational_chain(vector)
 
-
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
-    
